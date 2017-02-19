@@ -1,0 +1,3 @@
+[submodule "lib/stinger-dynograph"]
+	path = lib/stinger-dynograph
+	url = https://github.com/rohitvarkey/stinger-dynograph
