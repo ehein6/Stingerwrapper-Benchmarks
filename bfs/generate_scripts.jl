@@ -75,15 +75,15 @@ function runbench()
 
     dynodir = joinpath(dirname(curdir), "lib", "stinger-dynograph")
     script = """#!/bin/bash
-    #PBS -N sw_bfs_$(nthread)
-    #PBS -l nodes=1:ppn=$(nthread)
+    #PBS -N sw_bfs_julia
+    #PBS -l nodes=1:ppn=1
     #PBS -l mem=128gb
     #PBS -l walltime=12:00:00
     #PBS -m abe
     #PBS -j oe
 
     export STINGER_LIB_PATH=$(joinpath(dynodir, "build", "lib", "stinger", "lib"))
-    julia -e "include(\"$(joinpath(curdir, "bfs_bench.jl"))\");benchgroup($scaleRange, $EDGEFACTOR)"
+    julia -e "include(\\\"$(joinpath(curdir, "bfs_bench.jl"))\\\");benchgroup($scaleRange, $EDGEFACTOR)"
     """
 
     open("scripts/stingerwrapperbfsbench_julia.pbs", "w") do f
