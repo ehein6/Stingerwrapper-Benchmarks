@@ -61,7 +61,7 @@ function runbench()
         export HOOKS_FILENAME=output/bfs_bench_$(nthread)
         $(["./$(dynographbinarypath) --alg-names bfs --sort-mode snapshot "*
         "--input-path input/kron_$(scale)_16.graph.el --num-epochs 1 --batch-size 10000 " *
-        "--num-trials 1\n" for scale in scaleRange]...)
+        "--num-trials 3\n" for scale in scaleRange]...)
         """
 
         open("scripts/stingerwrapperbfsbench_$(nthread).pbs", "w") do f
