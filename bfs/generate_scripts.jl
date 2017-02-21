@@ -1,7 +1,6 @@
 const EDGEFACTOR = 16
 const scaleRange = 10:20
 const nthreads = [2^i for i in 0:6]
-const dynographbinarypath = "../stinger-dynograph/build/dynograph"
 const qsub_args = ""
 
 using StingerWrapper
@@ -46,6 +45,8 @@ end
 
 function runbench()
     curdir = dirname(@__FILE__)
+    dynodir = joinpath(dirname(curdir), "lib", "stinger-dynograph")
+    dynographbinarypath = joinpath(dynodir, "build", "dynograph")
     for nthread in nthreads
 
         script = """#!/bin/bash
@@ -73,7 +74,6 @@ function runbench()
         run(`qsub $(qsub_args) scripts/stingerwrapperbfsbench_$(nthread).pbs`)
     end
 
-    dynodir = joinpath(dirname(curdir), "lib", "stinger-dynograph")
     script = """#!/bin/bash
     #PBS -N sw_bfs_julia
     #PBS -l nodes=1:ppn=1
