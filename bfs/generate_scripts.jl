@@ -1,7 +1,6 @@
 const EDGEFACTOR = 16
 const scaleRange = 10:20
 const nthreads = [2^i for i in 0:6]
-const qsub_args = ""
 
 using StingerWrapper
 
@@ -64,32 +63,18 @@ function runbench()
         $(["$(dynographbinarypath) --alg-names bfs --sort-mode snapshot "*
         "--input-path $(joinpath(curdir, "input", "kron_$(scale)_16.graph.el")) --num-epochs 1 --batch-size 10000 " *
         "--num-trials 3\n" for scale in scaleRange]...)
+
+        export JULIA_NUM_THREADS=$(nthread)
+        julia $(joinpath(curdir, "bfs_bench.jl"))
         """
 
         open("scripts/stingerwrapperbfsbench_$(nthread).pbs", "w") do f
             write(f, script)
         end
 
-        info("Running dynograph benchmark with $nthread")
-        run(`qsub $(qsub_args) scripts/stingerwrapperbfsbench_$(nthread).pbs`)
+        info("Running bfs benchmark with $nthread")
+        run(`qsub scripts/stingerwrapperbfsbench_$(nthread).pbs`)
     end
-
-    script = """#!/bin/bash
-    #PBS -N sw_bfs_julia
-    #PBS -l nodes=1:ppn=1
-    #PBS -l mem=128gb
-    #PBS -l walltime=12:00:00
-    #PBS -m abe
-    #PBS -j oe
-
-    export STINGER_LIB_PATH=$(joinpath(dynodir, "build", "lib", "stinger", "lib"))
-    julia -e "include(\\\"$(joinpath(curdir, "bfs_bench.jl"))\\\");benchgroup($scaleRange, $EDGEFACTOR)"
-    """
-
-    open("scripts/stingerwrapperbfsbench_julia.pbs", "w") do f
-        write(f, script)
-    end
-    run(`qsub $(qsub_args) scripts/stingerwrapperbfsbench_julia.pbs`)
 end
 
 setup()
