@@ -10,8 +10,9 @@ function setupgraph(
     b::Float64=0.19,
     c::Float64 = 0.19
     )
+    srand(0)
     graph = kronecker(scale, edgefactor, a=a, b=b, c=c)
-    s = Stinger()
+    s = Stinger(generateconfig(2^scale))
     for i in 1:size(graph, 2)
         insert_edge!(s, 0, graph[1, i], graph[2, i], 1, 1)
     end

@@ -14,6 +14,7 @@ function generate_kronecker_dump(scale, edgefactor)
        warn("$filename already exists. Remove the file to be generated again.")
        return
    end
+   srand(0)
    graph = kronecker(scale, edgefactor)
    open(filename, "w") do f
        for i=1:size(graph,2)
@@ -83,7 +84,6 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
 
     #Generate the inputs
     for scale in scaleRange
-        srand(0)
         generate_kronecker_dump(scale, edgefactor)
     end
 
