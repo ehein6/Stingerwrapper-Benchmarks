@@ -67,7 +67,7 @@ function lg_bench(
         visitor_trial = run(lg_bfs_bench)
         @show minimum(visitor_trial)
         curdir = dirname(@__FILE__)
-        jldopen(joinpath(curdir, "output", "lg_visitor_$(scale)_$(edgefactor).jld"), "w") do f
+        jldopen(joinpath(curdir, "output", "lg", "lg_visitor_$(scale)_$(edgefactor).jld"), "w") do f
             write(f, "bfs_trial", visitor_trial)
         end
     end
