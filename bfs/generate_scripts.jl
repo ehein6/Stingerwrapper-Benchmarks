@@ -63,6 +63,7 @@ end
 function qsub_header(nthread, job, scale, edgefactor, useremail="", queue="")
     header = """#PBS -N $(job)_$(nthread)_$(scale)
     #PBS -l nodes=1:ppn=$(nthread)
+    #PBS -l walltime=12:00:00
     #PBS -l mem=160gb
     #PBS -m abe
     #PBS -M $useremail
