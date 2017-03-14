@@ -1,7 +1,9 @@
 using StingerWrapper
 
 function create_directories(directories)
-    for dir in directories
+    curdir = dirname(@__FILE__)
+    for dirname in directories
+        dir = joinpath(curdir, dirname)
         if !isdir(dir)
             mkdir(dir)
         end
@@ -9,7 +11,8 @@ function create_directories(directories)
 end
 
 function generate_kronecker_dump(scale, edgefactor)
-   filename = "input/kron_$(scale)_$(edgefactor).graph.el"
+   curdir = dirname(@__FILE__)
+   filename = joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.el")
    if isfile(filename)
        warn("$filename already exists. Remove the file to be generated again.")
        return
