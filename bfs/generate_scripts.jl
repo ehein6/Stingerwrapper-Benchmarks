@@ -73,7 +73,7 @@ end
 function qsub_header(nthread, job, scale, edgefactor, useremail="", queue="")
     header = """#PBS -N $(job)_$(nthread)_$(scale)
     #PBS -l nodes=1:ppn=$(nthread)
-    #PBS -l walltime=12:00:00
+    #PBS -l walltime=24:00:00
     #PBS -l mem=160gb
     #PBS -m abe
     #PBS -M $useremail
@@ -112,7 +112,7 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
             $(lgscript)
             """
             stingerwrapperscript = """#!/bin/bash
-            $(if qsub qsub_header(nthread, "stingerwrapper", scale, edgefactor, useremail, queue) else "" end)
+            $(if qsub qsub_header(nthread, "sw", scale, edgefactor, useremail, queue) else "" end)
             $(stingerwrapperscript)
             """
             dynographscript = """#!/bin/bash
