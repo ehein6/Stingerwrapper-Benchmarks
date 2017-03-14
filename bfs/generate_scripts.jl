@@ -23,10 +23,9 @@ function generate_kronecker_dump(scale, edgefactor)
        for i=1:size(graph,2)
            src = graph[1, i]
            dst = graph[2, i]
-           if src == dst
-		continue
-	   end
-           write(f, "$src $dst 1 $i\n")
+           if src != dst
+               write(f, "$src $dst 1 1\n")
+	       end
        end
    end
 end
@@ -76,7 +75,7 @@ end
 function qsub_header(nthread, job, scale, edgefactor, useremail="", queue="")
     header = """#PBS -N $(job)_$(nthread)_$(scale)
     #PBS -l nodes=1:ppn=$(nthread)
-    #PBS -l walltime=24:00:00
+    #PBS -l walltime=12:00:00
     #PBS -l mem=160gb
     #PBS -m abe
     #PBS -M $useremail
@@ -138,7 +137,7 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
             else
                 run(`bash $(joinpath(scriptdir, "lg", "lg_$(nthread)_$(scale)_$(edgefactor)"))`)
                 run(`bash $(joinpath(scriptdir, "stingerwrapper", "stingerwrapper_$(nthread)_$(scale)_$(edgefactor)"))`)
-                #run(`bash $(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"))`)
+                run(`bash $(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"))`)
             end
             if nthread == 1
                 lgvisitorscript = lg_visitor_bench_script(scale, edgefactor, joinpath(outputdir, "lg", "lg_visitor_$(scale)_$(edgefactor).jld"), nthread)

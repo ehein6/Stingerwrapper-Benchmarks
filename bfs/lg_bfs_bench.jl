@@ -14,10 +14,16 @@ function setupgraph(
     c::Float64 = 0.19
     )
     srand(0)
-    graph = kronecker(scale, edgefactor, a=a, b=b, c=c)
+    #TODO: Replace with reading from disk
+    #graph = kronecker(scale, edgefactor, a=a, b=b, c=c)
     g = DiGraph(2^scale)
-    for i in 1:size(graph, 2)
-        add_edge!(g, graph[1, i]+1, graph[2, i]+1)
+    curdir = dirname(@__FILE__)
+    inputfile = joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.el")
+    open(inputfile) do f
+        for line in eachline(f)
+            vals = split(line)
+            add_edge!(g, parse(Int64, vals[1])+1, parse(Int64, vals[2])+1)
+        end
     end
     g
 end
