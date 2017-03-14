@@ -38,6 +38,16 @@ function lg_bench_script(scale, edgefactor, filename, nthreads)
     lgscript
 end
 
+function lg_visitor_bench_script(scale, edgefactor, filename, nthreads)
+    curdir = dirname(@__FILE__)
+    lgbenchfile = joinpath(curdir, "lg_bfs_bench.jl")
+    lgscript = """
+    export JULIA_NUM_THREADS=$(nthreads)
+    julia -e 'include("$lgbenchfile"); lg_visitor_bench($scale, $edgefactor, "$filename")'
+    """
+    lgscript
+end
+
 function stingerwrapper_bench_script(scale, edgefactor, filename, nthreads)
     curdir = dirname(@__FILE__)
     stingerwrapperbenchfile = joinpath(curdir, "stingerwrapper_bfs_bench.jl")
@@ -125,7 +135,22 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
             else
                 run(`bash $(joinpath(scriptdir, "lg", "lg_$(nthread)_$(scale)_$(edgefactor)"))`)
                 run(`bash $(joinpath(scriptdir, "stingerwrapper", "stingerwrapper_$(nthread)_$(scale)_$(edgefactor)"))`)
-                run(`bash $(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"))`)
+                #run(`bash $(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"))`)
+            end
+            if nthread == 1
+                lgvisitorscript = lg_visitor_bench_script(scale, edgefactor, joinpath(outputdir, "lg", "lg_visitor_$(scale)_$(edgefactor).jld"), nthread)
+                lgvisitorscript = """#!/bin/bash
+                $(if qsub qsub_header(nthread, "lgvisitor", scale, edgefactor, useremail, queue) else "" end)
+                $(lgvisitorscript)
+                """
+                open(joinpath(scriptdir, "lg", "lg_visitor_$(scale)_$(edgefactor)"), "w") do f
+                    write(f, lgvisitorscript)
+                end
+                if qsub
+                    run(`qsub $(joinpath(scriptdir, "lg", "lg_visitor_$(scale)_$(edgefactor)"))`)
+                else
+                    run(`bash $(joinpath(scriptdir, "lg", "lg_visitor_$(scale)_$(edgefactor)"))`)
+                end
             end
         end
     end

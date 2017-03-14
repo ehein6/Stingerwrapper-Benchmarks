@@ -62,14 +62,25 @@ function lg_bench(
     jldopen(filename, "w") do f
         write(f, "bfs_trial", bfs_trial)
     end
-    if threads == 1
-        lg_bfs_bench = @benchmarkable bfsvisitorbenchutil(g, $nv) seconds=6000 samples=3 setup=(g=setupgraph($scale, $edgefactor))
-        visitor_trial = run(lg_bfs_bench)
-        @show minimum(visitor_trial)
-        curdir = dirname(@__FILE__)
-        jldopen(joinpath(curdir, "output", "lg", "lg_visitor_$(scale)_$(edgefactor).jld"), "w") do f
-            write(f, "bfs_trial", visitor_trial)
-        end
-    end
     bfs_trial
+end
+
+function lg_visitor_bench(
+    scale::Int64,
+    edgefactor::Int64,
+    filename;
+    a::Float64=0.57,
+    b::Float64=0.19,
+    c::Float64 = 0.19,
+    )
+    nv = 2^scale
+    threads = nthreads()
+    lg_bfs_bench = @benchmarkable bfsvisitorbenchutil(g, $nv) seconds=6000 samples=3 setup=(g=setupgraph($scale, $edgefactor))
+    info("Running BFS benchmark for visitor LG with threads = $threads, scale = $scale, edgefactor = $edgefactor")
+    visitor_trial = run(lg_bfs_bench)
+    @show minimum(visitor_trial)
+    curdir = dirname(@__FILE__)
+    jldopen(joinpath(curdir, "output", "lg", "lg_visitor_$(scale)_$(edgefactor).jld"), "w") do f
+        write(f, "bfs_trial", visitor_trial)
+    end
 end
