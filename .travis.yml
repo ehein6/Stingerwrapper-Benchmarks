@@ -1,0 +1,25 @@
+language: julia
+os: linux
+julia: release
+sudo: required
+
+notifications:
+  email: false
+
+before_install:
+    - sudo apt-get update && apt-get install -y -qq apt-utils && apt-get -y -qq install protobuf-compiler curl git libprotobuf-dev
+    - sudo apt-get -y -qq install hdf5-tools
+    - sudo apt-get install -y  -qq build-essential
+    - sudo apt-get install -y  -qq cmake
+    - julia -e 'Pkg.add("BenchmarkTools"); Pkg.add("JLD"); Pkg.add("LightGraphs"); Pkg.add("Plots"); Pkg.clone("https://github.com/rohitvarkey/UnsafeAtomics.jl.git"); Pkg.clone("https://github.com/rohitvarkey/StingerWrapper.jl.git");'
+    - git submodule update --init
+
+before_script:
+    - cd lib/stinger-dynograph && mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc) dynograph
+    - export DYNOGRAPH_PATH="$TRAVIS_BUILD_DIR/lib/stinger-dynograph/build"
+    - export STINGER_LIB_PATH="$DYNOGRAPH_PATH/lib/stinger/lib"
+
+script:
+    - cd $TRAVIS_BUILD_DIR/bfs/
+    - julia -e 'include("generate_scripts.jl"); runbench([1, 2, 4], 10:11, 16, qsub=false)'
