@@ -34,7 +34,7 @@ Pkg.clone("https://github.com/rohitvarkey/StingerWrapper.jl.git")
 cd lib/stinger-dynograph
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc) dynograph
-export DYNOGRAPH_PATH="$TRAVIS_BUILD_DIR/lib/stinger-dynograph/build"
+export DYNOGRAPH_PATH="lib/stinger-dynograph/build"
 export STINGER_LIB_PATH="$DYNOGRAPH_PATH/lib/stinger/lib"
 ```
 
