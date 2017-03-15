@@ -16,6 +16,18 @@ cd Stingerwrapper-Benchmarks
 git submodule update --init
 ```
 
+#### Setting up the Julia packages
+
+```julia
+Pkg.add("LightGraphs")
+Pkg.add("BenchmarkTools")
+Pkg.add("JLD")
+Pkg.add("LightGraphs")
+Pkg.add("Plots")
+Pkg.clone("https://github.com/rohitvarkey/UnsafeAtomics.jl.git")
+Pkg.clone("https://github.com/rohitvarkey/StingerWrapper.jl.git")
+```
+
 #### Building dynograph and stinger
 
 ```bash
@@ -43,3 +55,8 @@ You can also use `bash` to run these scripts by calling
 include("generate_scripts.jl")
 runbench([2^i for i=0:6], 10:28, 16, qsub=false)
 ```
+
+### Analyzing the benchmarks
+
+Running the `analyze.jl` script in `bfs/` will collect the results of the benchmarks from the output
+directories and create some plots.
