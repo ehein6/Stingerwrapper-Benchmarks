@@ -34,11 +34,14 @@ Pkg.clone("https://github.com/rohitvarkey/StingerWrapper.jl.git")
 cd lib/stinger-dynograph
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc) dynograph
-export DYNOGRAPH_PATH="lib/stinger-dynograph/build"
+export DYNOGRAPH_PATH="$(pwd)/lib/stinger-dynograph/build"
 export STINGER_LIB_PATH="$DYNOGRAPH_PATH/lib/stinger/lib"
 ```
 
 ### Running the Benchmarks
+
+`cd` into the `bfs` directory and start julia. Then run the following commands
+inside julia.
 
 The `generate_scripts.jl` Julia script generates the RMAT graphs, the scripts to
 run the benchmarks and starts the benchmarks. By default, it assumes you are running
