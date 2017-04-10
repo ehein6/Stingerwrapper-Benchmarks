@@ -127,8 +127,8 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
     outputdir = joinpath(curdir, "output")
     scriptdir = joinpath(curdir, "scripts")
     masterscripthandle = open(joinpath(scriptdir, "master_script"), "w")
-    for scale in scaleRange
-        for nthread in nthreads
+    for nthread in reverse(nthreads)
+        for scale in scaleRange
             lgscript = lg_bench_script(scale, edgefactor, joinpath(outputdir, "lg", "lg_$(nthread)_$(scale)_$(edgefactor).jld"), nthread)
             stingerwrapperscript = stingerwrapper_bench_script(scale, edgefactor, joinpath(outputdir, "stingerwrapper", "stingerwrapper_$(nthread)_$(scale)_$(edgefactor).jld"), nthread)
             dynographscript = dynograph_bench_script(scale, edgefactor, joinpath(outputdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"), nthread)
