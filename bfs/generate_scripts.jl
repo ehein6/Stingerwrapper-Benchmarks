@@ -19,13 +19,24 @@ function generate_kronecker_dump(scale, edgefactor)
    end
    srand(0)
    graph = kronecker(scale, edgefactor)
+   validsources = falses(2^scale)
    open(filename, "w") do f
        for i=1:size(graph,2)
            src = graph[1, i]
            dst = graph[2, i]
            if src != dst
+               validsources[src+1] = true
                write(f, "$src $dst 1 1\n")
 	       end
+       end
+   end
+   validsources = find(validsources) - 1
+   srcfilename = joinpath(curdir, "input", "bfssources_$(scale)_$(edgefactor)")
+   srand(0)
+   sources = rand(validsources, 64)
+   open(srcfilename, "w") do f
+       for src in sources
+            write(f, "$src\n")
        end
    end
 end
@@ -35,7 +46,7 @@ function lg_bench_script(scale, edgefactor, filename, nthreads)
     lgbenchfile = joinpath(curdir, "lg_bfs_bench.jl")
     lgscript = """
     export JULIA_NUM_THREADS=$(nthreads)
-    julia -e 'include("$lgbenchfile"); lg_bench($scale, $edgefactor, "$filename")'
+    julia -O3 -e 'include("$lgbenchfile"); lg_bench($scale, $edgefactor, "$filename")'
     """
     lgscript
 end
@@ -45,7 +56,7 @@ function lg_visitor_bench_script(scale, edgefactor, filename, nthreads)
     lgbenchfile = joinpath(curdir, "lg_bfs_bench.jl")
     lgscript = """
     export JULIA_NUM_THREADS=$(nthreads)
-    julia -e 'include("$lgbenchfile"); lg_visitor_bench($scale, $edgefactor, "$filename")'
+    julia -O3 -e 'include("$lgbenchfile"); lg_visitor_bench($scale, $edgefactor, "$filename")'
     """
     lgscript
 end
@@ -55,7 +66,7 @@ function stingerwrapper_bench_script(scale, edgefactor, filename, nthreads)
     stingerwrapperbenchfile = joinpath(curdir, "stingerwrapper_bfs_bench.jl")
     stingerwrapperscript = """
     export JULIA_NUM_THREADS=$(nthreads)
-    julia -e 'include("$stingerwrapperbenchfile"); stingerwrapper_bench($scale, $edgefactor, "$filename")'
+    julia -O3 -e 'include("$stingerwrapperbenchfile"); stingerwrapper_bench($scale, $edgefactor, "$filename")'
     """
     stingerwrapperscript
 end
