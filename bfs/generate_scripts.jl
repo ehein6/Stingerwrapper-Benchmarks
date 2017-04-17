@@ -19,26 +19,36 @@ function generate_kronecker_dump(scale, edgefactor)
    end
    srand(0)
    graph = kronecker(scale, edgefactor)
-   validsources = falses(2^scale)
    open(filename, "w") do f
        for i=1:size(graph,2)
            src = graph[1, i]
            dst = graph[2, i]
            if src != dst
-               validsources[src+1] = true
                write(f, "$src $dst 1 1\n")
 	       end
        end
    end
-   validsources = find(validsources) - 1
-   srcfilename = joinpath(curdir, "input", "bfssources_$(scale)_$(edgefactor)")
-   srand(0)
-   sources = rand(validsources, 64)
-   open(srcfilename, "w") do f
-       for src in sources
-            write(f, "$src\n")
-       end
-   end
+end
+
+function generate_sources(scale, edgefactor)
+    curdir = dirname(@__FILE__)
+    validsources = falses(2^scale)
+    filename = joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.el")
+    open(filename) do f
+        for line in eachline(f)
+            edge = split(line)
+            validsources[parse(Int, edge[1])+1] = true
+        end
+    end
+    validsources = find(validsources) - 1
+    srcfilename = joinpath(curdir, "input", "bfssources_$(scale)_$(edgefactor)")
+    srand(0)
+    sources = rand(validsources, 64)
+    open(srcfilename, "w") do f
+        for src in sources
+             write(f, "$src\n")
+        end
+    end
 end
 
 function lg_bench_script(scale, edgefactor, filename, nthreads)
@@ -109,6 +119,7 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
     #Generate the inputs
     for scale in scaleRange
         generate_kronecker_dump(scale, edgefactor)
+        generate_sources(scale, edgefactor)
     end
 
     #Generate the scripts
