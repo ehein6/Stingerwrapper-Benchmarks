@@ -126,6 +126,7 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
     curdir = dirname(@__FILE__)
     outputdir = joinpath(curdir, "output")
     scriptdir = joinpath(curdir, "scripts")
+    masterscripthandle = open(joinpath(scriptdir, "master_script"), "w")
     for scale in scaleRange
         for nthread in nthreads
             lgscript = lg_bench_script(scale, edgefactor, joinpath(outputdir, "lg", "lg_$(nthread)_$(scale)_$(edgefactor).jld"), nthread)
@@ -152,14 +153,15 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
             open(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"), "w") do f
                 write(f, dynographscript)
             end
+
             if qsub
                 run(`qsub $(joinpath(scriptdir, "lg", "lg_$(nthread)_$(scale)_$(edgefactor)"))`)
                 run(`qsub $(joinpath(scriptdir, "stingerwrapper", "stingerwrapper_$(nthread)_$(scale)_$(edgefactor)"))`)
                 run(`qsub $(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"))`)
             else
-                run(`bash $(joinpath(scriptdir, "lg", "lg_$(nthread)_$(scale)_$(edgefactor)"))`)
-                run(`bash $(joinpath(scriptdir, "stingerwrapper", "stingerwrapper_$(nthread)_$(scale)_$(edgefactor)"))`)
-                run(`bash $(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"))`)
+                write(masterscripthandle, """bash $(joinpath(scriptdir, "lg", "lg_$(nthread)_$(scale)_$(edgefactor)"))\n""")
+                write(masterscripthandle, """bash $(joinpath(scriptdir, "stingerwrapper", "stingerwrapper_$(nthread)_$(scale)_$(edgefactor)"))\n""")
+                write(masterscripthandle, """bash $(joinpath(scriptdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"))\n""")
             end
             if nthread == 1
                 lgvisitorscript = lg_visitor_bench_script(scale, edgefactor, joinpath(outputdir, "lg", "lg_visitor_$(scale)_$(edgefactor).jld"), nthread)
@@ -173,11 +175,12 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
                 if qsub
                     run(`qsub $(joinpath(scriptdir, "lg", "lg_visitor_$(scale)_$(edgefactor)"))`)
                 else
-                    run(`bash $(joinpath(scriptdir, "lg", "lg_visitor_$(scale)_$(edgefactor)"))`)
+                    write(masterscripthandle, """bash $(joinpath(scriptdir, "lg", "lg_visitor_$(scale)_$(edgefactor)"))\n""")
                 end
             end
         end
     end
+    close(masterscripthandle)
 end
 
 #runbench()
