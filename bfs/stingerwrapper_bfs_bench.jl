@@ -59,10 +59,11 @@ function stingerwrapper_bench(
     sources = zeros(Int64, 64)
     getsources!(sources, scale, edgefactor)
     @show sources
+    s = setupgraph(scale, edgefactor)
     if threads==1
-        bfs_bench = @benchmarkable serialbfsbenchutil(s, $nv, $sources) seconds=6000 samples=3 setup=(s=setupgraph($scale, $edgefactor))
+        bfs_bench = @benchmarkable serialbfsbenchutil($s, $nv, $sources) seconds=6000 samples=3
     else
-        bfs_bench = @benchmarkable levelsyncbfsbenchutil(s, $nv, $sources) seconds=6000 samples=3 setup=(s=setupgraph($scale, $edgefactor))
+        bfs_bench = @benchmarkable levelsyncbfsbenchutil($s, $nv, $sources) seconds=6000 samples=3
     end
     info("Running BFS benchmark for StingerWrapper with threads = $threads, scale = $scale, edgefactor = $edgefactor")
     bfs_trial = run(bfs_bench)
