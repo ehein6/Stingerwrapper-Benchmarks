@@ -69,11 +69,13 @@ function lg_bench(
     threads = nthreads()
     sources = zeros(Int64, 64)
     getsources!(sources, scale, edgefactor)
+    g=setupgraph(scale, edgefactor)
+
     @show sources
     if threads==1
-        bfs_bench = @benchmarkable serialbfsbenchutil(s, $nv, $sources) seconds=6000 samples=3 setup=(s=setupgraph($scale, $edgefactor))
+        bfs_bench = @benchmarkable serialbfsbenchutil($g, $nv, $sources) seconds=6000 samples=3
     else
-        bfs_bench = @benchmarkable levelsyncbfsbenchutil(s, $nv, $sources) seconds=6000 samples=3 setup=(s=setupgraph($scale, $edgefactor))
+        bfs_bench = @benchmarkable levelsyncbfsbenchutil($g, $nv, $sources) seconds=6000 samples=3
     end
     info("Running BFS benchmark for LG with threads = $threads, scale = $scale, edgefactor = $edgefactor")
     bfs_trial = run(bfs_bench)
@@ -96,8 +98,10 @@ function lg_visitor_bench(
     threads = nthreads()
     sources = zeros(Int64, 64)
     getsources!(sources, scale, edgefactor)
+    g=setupgraph(scale, edgefactor)
+
     @show sources
-    lg_bfs_bench = @benchmarkable bfsvisitorbenchutil(g, $nv, $sources) seconds=6000 samples=3 setup=(g=setupgraph($scale, $edgefactor))
+    lg_bfs_bench = @benchmarkable bfsvisitorbenchutil($g, $nv, $sources) seconds=6000 samples=3
     info("Running BFS benchmark for visitor LG with threads = $threads, scale = $scale, edgefactor = $edgefactor")
     visitor_trial = run(lg_bfs_bench)
     @show minimum(visitor_trial)
