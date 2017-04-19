@@ -61,8 +61,11 @@ You can also use `bash` to run these scripts by calling
 include("generate_scripts.jl")
 runbench([2^i for i=0:6], 10:28, 16, qsub=false)
 ```
+After that run `bash scripts/master_script`.
 
 ### Analyzing the benchmarks
 
 Running the `analyze.jl` script in `bfs/` will collect the results of the benchmarks from the output
 directories and create some plots.
+
+Alternatively, running `collect_data.jl` in `bfs/` will create csv dumps of the outputs.
