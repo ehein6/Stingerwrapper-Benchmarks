@@ -13,12 +13,8 @@ function setupgraph(
     s = Stinger(generateconfig(2^scale))
     curdir = dirname(@__FILE__)
     inputfile = joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.el")
-    open(inputfile) do f
-        for line in eachline(f)
-            vals = split(line)
-            insert_edge!(s, 0, parse(Int64, vals[1]), parse(Int64, vals[2]), 1, 1)
-        end
-    end
+    edges = readdlm(inputfile, Int64)
+    dyno_set_initial_edges!(s, edges)
     return s
 end
 

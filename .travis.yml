@@ -11,6 +11,7 @@ before_install:
     - sudo apt-get update
     - sudo apt-get install -y -qq apt-utils protobuf-compiler curl git libprotobuf-dev hdf5-tools build-essential cmake
     - julia -e 'Pkg.add("BenchmarkTools"); Pkg.add("JLD"); Pkg.add("LightGraphs"); Pkg.add("Plots"); Pkg.clone("https://github.com/rohitvarkey/UnsafeAtomics.jl.git"); Pkg.clone("https://github.com/rohitvarkey/StingerWrapper.jl.git");'
+    - julia -e 'Pkg.checkout("StingerWrapper", "set_initial_edges")' 
     - git submodule update --init
 
 before_script:
