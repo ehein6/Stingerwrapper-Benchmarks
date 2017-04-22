@@ -40,6 +40,9 @@ export STINGER_LIB_PATH="$DYNOGRAPH_PATH/lib/stinger/lib"
 
 ### Running the Benchmarks
 
+You will need to be on the `set_initial_edges` branch of `StingerWrapper` for these
+benchmarks.
+
 `cd` into the `bfs` directory and start julia. Then run the following commands
 inside julia.
 
