@@ -56,7 +56,7 @@ function lg_bench_script(scale, edgefactor, filename, nthreads)
     lgbenchfile = joinpath(curdir, "lg_bfs_bench.jl")
     lgscript = """
     export JULIA_NUM_THREADS=$(nthreads)
-    julia -O3 -e 'include("$lgbenchfile"); lg_bench($scale, $edgefactor, "$filename")'
+    julia -O3 --check-bounds=no -e 'include("$lgbenchfile"); lg_bench($scale, $edgefactor, "$filename")'
     """
     lgscript
 end
@@ -66,7 +66,7 @@ function lg_visitor_bench_script(scale, edgefactor, filename, nthreads)
     lgbenchfile = joinpath(curdir, "lg_bfs_bench.jl")
     lgscript = """
     export JULIA_NUM_THREADS=$(nthreads)
-    julia -O3 -e 'include("$lgbenchfile"); lg_visitor_bench($scale, $edgefactor, "$filename")'
+    julia -O3 --check-bounds=no -e 'include("$lgbenchfile"); lg_visitor_bench($scale, $edgefactor, "$filename")'
     """
     lgscript
 end
@@ -76,7 +76,7 @@ function stingerwrapper_bench_script(scale, edgefactor, filename, nthreads)
     stingerwrapperbenchfile = joinpath(curdir, "stingerwrapper_bfs_bench.jl")
     stingerwrapperscript = """
     export JULIA_NUM_THREADS=$(nthreads)
-    julia -O3 -e 'include("$stingerwrapperbenchfile"); stingerwrapper_bench($scale, $edgefactor, "$filename")'
+    julia -O3 --check-bounds=no -e 'include("$stingerwrapperbenchfile"); stingerwrapper_bench($scale, $edgefactor, "$filename")'
     """
     stingerwrapperscript
 end
