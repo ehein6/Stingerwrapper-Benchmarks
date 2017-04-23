@@ -110,7 +110,7 @@ end
 function exportenvs()
     curdir = dirname(@__FILE__)
     dynodir = joinpath(dirname(curdir), "lib", "stinger-dynograph", "build")
-    stingerlibpath = joinpath(dynodir, "lib", "stinger")
+    stingerlibpath = joinpath(dynodir, "lib", "stinger", "lib")
     envstring = """
     export DYNOGRAPH_PATH=$(dynodir)
     export STINGER_LIB_PATH=$(stingerlibpath)
