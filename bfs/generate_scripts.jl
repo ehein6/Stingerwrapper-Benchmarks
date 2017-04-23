@@ -107,6 +107,17 @@ function qsub_header(nthread, job, scale, edgefactor, useremail="", queue="")
     header
 end
 
+function exportenvs()
+    curdir = dirname(@__FILE__)
+    dynodir = joinpath(dirname(curdir), "lib", "stinger-dynograph", "build")
+    stingerlibpath = joinpath(dynodir, "lib", "stinger")
+    envstring = """
+    export DYNOGRAPH_PATH=$(dynodir)
+    export STINGER_LIB_PATH=$(stingerlibpath)
+    """
+    envstring
+end
+
 #Generate all the kronecker graphs
 function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", queue="")
 
@@ -134,10 +145,12 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
             dynographscript = dynograph_bench_script(scale, edgefactor, joinpath(outputdir, "dynograph", "dynograph_$(nthread)_$(scale)_$(edgefactor)"), nthread)
             lgscript = """#!/bin/bash
             $(if qsub qsub_header(nthread, "lg", scale, edgefactor, useremail, queue) else "" end)
+            $(exportenvs())
             $(lgscript)
             """
             stingerwrapperscript = """#!/bin/bash
             $(if qsub qsub_header(nthread, "sw", scale, edgefactor, useremail, queue) else "" end)
+            $(exportenvs())
             $(stingerwrapperscript)
             """
             dynographscript = """#!/bin/bash
@@ -167,6 +180,7 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
                 lgvisitorscript = lg_visitor_bench_script(scale, edgefactor, joinpath(outputdir, "lg", "lg_visitor_$(scale)_$(edgefactor).jld"), nthread)
                 lgvisitorscript = """#!/bin/bash
                 $(if qsub qsub_header(nthread, "lgvisitor", scale, edgefactor, useremail, queue) else "" end)
+                $(exportenvs())
                 $(lgvisitorscript)
                 """
                 open(joinpath(scriptdir, "lg", "lg_visitor_$(scale)_$(edgefactor)"), "w") do f
