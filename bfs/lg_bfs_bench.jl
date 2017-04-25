@@ -14,14 +14,26 @@ function setupgraph(
     c::Float64 = 0.19
     )
     #TODO: Time the creation
-    g = DiGraph(2^scale)
     curdir = dirname(@__FILE__)
-    inputfile = joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.el")
-    open(inputfile) do f
-        for line in eachline(f)
-            vals = split(line)
-            add_edge!(g, parse(Int64, vals[1])+1, parse(Int64, vals[2])+1)
+    lggraphjld = joinpath(curdir, "input", "lg_$(scale)_$(edgefactor).jld")
+    if isfile(lggraphjld)
+        g = JLD.load(lggraphjld)["graph"]
+        info("Reading from $lggraphjld")
+        return g
+    else
+        g = DiGraph(2^scale)
+        info("Reading from file")
+        inputfile = joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.el")
+        open(inputfile) do f
+            for line in eachline(f)
+                vals = split(line)
+                add_edge!(g, parse(Int64, vals[1])+1, parse(Int64, vals[2])+1)
+            end
         end
+        jldopen(lggraphjld, "w") do f
+            write(f, "graph", g)
+        end
+        return g
     end
     g
 end
