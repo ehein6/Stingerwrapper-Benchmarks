@@ -128,10 +128,10 @@ function runbench(nthreads, scaleRange, edgefactor; qsub=true, useremail="", que
     end
 
     #Generate the inputs
-    for scale in scaleRange
-        generate_kronecker_dump(scale, edgefactor)
-        generate_sources(scale, edgefactor)
-    end
+    #for scale in scaleRange
+    #    generate_kronecker_dump(scale, edgefactor)
+    #    generate_sources(scale, edgefactor)
+    #end
 
     #Generate the scripts
     curdir = dirname(@__FILE__)
