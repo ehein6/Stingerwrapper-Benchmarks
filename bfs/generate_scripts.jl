@@ -88,7 +88,7 @@ function dynograph_bench_script(scale, edgefactor, filename, nthreads)
     dynoscript = """
     export OMP_NUM_THREADS=$(nthreads)
     export HOOKS_FILENAME=$(filename)
-    $(dynographbinarypath) --alg-names bfs --sort-mode snapshot --input-path $(joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.el")) --source-path $(joinpath(curdir, "input", "bfssources_$(scale)_$(edgefactor)")) --num-epochs 1 --batch-size 10000 --num-trials 3
+    $(dynographbinarypath) --alg-names bfs --sort-mode snapshot --input-path $(joinpath(curdir, "input", "kron_$(scale)_$(edgefactor).graph.bin")) --source-path $(joinpath(curdir, "input", "bfssources_$(scale)_$(edgefactor)")) --num-epochs 1 --batch-size 10000 --num-trials 3
     """
     dynoscript
 end
